@@ -1,0 +1,539 @@
+/* ============================================================
+   WARSMUSIC — style.css
+   Reproductor de música web con biblioteca y sección premium
+   ============================================================ */
+
+
+/* ==============================================================
+   🎨 VARIABLES GLOBALES DE COLOR
+   Se definen aquí una sola vez y se usan en todo el archivo
+   con var(--nombre). Si quieres cambiar un color, solo lo
+   cambias aquí y se actualiza en toda la página automáticamente.
+=============================================================== */
+:root {
+    --azul: #00F2FF;              /* Neón cian — usado en brillos, bordes y hover */
+    --morado: #8A2BE2;            /* Violeta — usado en controles y nombre de canción */
+    --fondo: rgba(0, 0, 0, 0.9); /* Negro casi opaco — fondo de los paneles flotantes */
+}
+
+
+/* ==============================================================
+   📄 CUERPO DE LA PÁGINA
+   Estilos base que se aplican a toda la página.
+   Define la fuente, la imagen de fondo y el comportamiento
+   del scroll.
+=============================================================== */
+body {
+    font-family: "Exo", sans-serif;   /* Fuente principal de toda la página */
+    background-image: url(./imagenes/ad077945-9f15-43d8-866b-1b3331fd0b97.png); /* Imagen de fondo */
+    background-size: cover;            /* La imagen cubre toda la pantalla sin repetirse */
+    background-attachment: fixed;      /* El fondo queda fijo al hacer scroll (efecto parallax) */
+    overflow-x: hidden;                /* Evita que aparezca scroll horizontal */
+    min-height: 100vh;                 /* La página ocupa al menos toda la altura visible */
+}
+
+
+/* ==============================================================
+   🔤 TÍTULO PRINCIPAL (h1)
+   El nombre "WARSMUSIC" centrado con efecto de brillo neón
+=============================================================== */
+h1 {
+    text-align: center;
+    color: var(--azul);                        /* Color cian de las variables */
+    font-family: Georgia, 'Times New Roman', serif; /* Fuente diferente al body, más clásica */
+    margin-top: 20px;
+    text-shadow: 0 0 10px var(--azul);         /* Brillo neón alrededor del texto */
+}
+
+
+/* ==============================================================
+   🔤 SUBTÍTULO (h2)
+   El texto de bienvenida y los títulos de biblioteca/premium
+=============================================================== */
+h2 {
+    text-align: center;
+    color: #585566;       /* Gris violáceo suave, menos protagonismo que el h1 */
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+
+/* ==============================================================
+   🧭 MENÚ DE NAVEGACIÓN
+   Lista horizontal centrada con los enlaces: Inicio, Explorar,
+   Biblioteca, Premium
+=============================================================== */
+.nav-links {
+    list-style-type: none;    /* Quita los puntos de la lista */
+    display: flex;            /* Pone los elementos en fila */
+    justify-content: center;  /* Los centra horizontalmente */
+    gap: 20px;                /* Espacio entre cada enlace */
+    padding: 20px;
+}
+
+/* Estilo de cada enlace del menú */
+.nav-links a {
+    text-decoration: none;          /* Quita el subrayado */
+    color: #ccc;                    /* Gris claro por defecto */
+    font-family: Georgia, serif;
+    transition: 0.3s;               /* Suaviza el cambio al hacer hover */
+}
+
+/* Efecto al pasar el cursor sobre un enlace */
+.nav-links a:hover {
+    color: var(--azul);
+    text-shadow: 0 0 10px var(--azul), 0 0 20px #6112aa9c; /* Brillo doble: azul + morado */
+    font-size: 18px; /* Se agranda levemente */
+}
+
+
+/* ==============================================================
+   🎮 CONTROLES DEL REPRODUCTOR
+   Contiene los botones de anterior, play/pausa y siguiente,
+   más el nombre de la canción actual
+=============================================================== */
+.player-controls {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 40px;      /* Tamaño grande para los iconos */
+    color: var(--morado);
+    position: relative;
+    z-index: 10;          /* Se muestra por encima del fondo animado de círculos */
+}
+
+/* Cada icono individualmente */
+.player-controls i {
+    margin: 0 25px;    /* Espacio entre botones */
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Efecto al pasar el cursor sobre un botón */
+.player-controls i:hover {
+    color: var(--azul);
+    text-shadow: 0 0 15px var(--azul); /* Brillo neón al hacer hover */
+    transform: scale(1.2);             /* Se agranda un 20% */
+}
+
+
+/* ==============================================================
+   🌐 IMPORTACIÓN DE FUENTE Y RESET GENERAL
+   Se importa la fuente Exo desde Google Fonts.
+   ⚠️ Idealmente este @import debería ir al principio del archivo
+   para garantizar que la fuente cargue antes que los estilos.
+   El reset elimina márgenes y paddings por defecto del navegador.
+=============================================================== */
+@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* El padding no aumenta el tamaño del elemento */
+}
+
+/* Segunda declaración del body — agrega fondo negro y bloquea scroll
+   para que los círculos animados se vean correctamente */
+body {
+    font-family: "Exo", sans-serif;
+    background-color: #000; /* Fondo negro para que se vean los círculos */
+    overflow: hidden;
+    height: 100vh;
+}
+
+
+/* ==============================================================
+   📦 CONTENEDOR DE TEXTO CENTRAL (.contexto)
+   Posiciona el contenido principal sobre los círculos animados.
+   No está siendo usado activamente en el HTML actual, pero está
+   disponible si se necesita centrar texto sobre el fondo.
+=============================================================== */
+.contexto {
+    width: 100%;
+    position: absolute;
+    top: 50vh;   /* Centrado verticalmente en la pantalla */
+    z-index: 1;  /* Por encima de los círculos animados */
+}
+
+.contexto h1 {
+    text-align: center;
+    font-size: 50px;
+    color: #fff;
+}
+
+
+/* ==============================================================
+   🔵 FONDO ANIMADO — CONTENEDOR DE CÍRCULOS
+   Este div envuelve todos los <li> que forman las partículas
+   animadas que suben desde abajo. Se coloca detrás de todo
+   el contenido visible.
+=============================================================== */
+.circulos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;          /* Se queda detrás de todo el contenido */
+    pointer-events: none; /* Los clics pasan a través sin bloquearse */
+}
+
+/* Estilo base compartido por todos los círculos (partículas) */
+.circulos li {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.733); /* Blanco semitransparente */
+    animation: animar 25s linear infinite;   /* Animación continua hacia arriba */
+    bottom: -150px;                          /* Empieza fuera de pantalla por abajo */
+}
+
+
+/* ==============================================================
+   🔵 POSICIÓN Y TIMING INDIVIDUAL DE CADA CÍRCULO
+   Cada círculo tiene su propio tamaño, posición horizontal
+   y retraso de animación para que no se vean sincronizados
+   y el efecto sea más natural y orgánico.
+=============================================================== */
+
+.circulos li:nth-child(1) {
+    left: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+}
+
+.circulos li:nth-child(2) {
+    left: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 2s;
+    animation-duration: 12s; /* Este sube más rápido que los demás */
+}
+
+.circulos li:nth-child(3) {
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+}
+
+.circulos li:nth-child(4) {
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 18s; /* Más lento que el por defecto */
+}
+
+.circulos li:nth-child(5) {
+    left: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+}
+
+.circulos li:nth-child(6) {
+    left: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 3s; /* Aparece 3 segundos después de cargar */
+}
+
+.circulos li:nth-child(7) {
+    left: 35%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 7s; /* El más tardío en aparecer */
+}
+
+.circulos li:nth-child(8) {
+    left: 50%;
+    width: 25px;
+    height: 25px;
+    animation-delay: 15s;
+    animation-duration: 45s; /* El más lento de todos */
+}
+
+.circulos li:nth-child(9) {
+    left: 20%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 2s;
+    animation-duration: 35s;
+}
+
+.circulos li:nth-child(10) {
+    left: 86%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0s;
+    animation-duration: 11s; /* Relativamente rápido para su tamaño */
+}
+
+
+/* ==============================================================
+   🎞️ ANIMACIÓN DE LOS CÍRCULOS (@keyframes animar)
+   Define el movimiento de cada partícula:
+   - Sube 1000px hacia arriba
+   - Gira dos vueltas completas (720°)
+   - Se desvanece (opacity 1 → 0)
+   - Pasa de cuadrado a círculo (border-radius 0 → 50%)
+=============================================================== */
+@keyframes animar {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;        /* Completamente visible al inicio */
+        border-radius: 0;  /* Comienza como cuadrado */
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg); /* Sube y gira dos vueltas */
+        opacity: 0;                                    /* Se desvanece al llegar arriba */
+        border-radius: 50%;                            /* Termina como círculo perfecto */
+    }
+}
+
+
+/* ==============================================================
+   🎵 NOMBRE DE LA CANCIÓN (#nombre-cancion)
+   Muestra el nombre de la canción que se está reproduciendo.
+   Tiene fondo semiopaco y efecto de brillo neón en capas
+   para darle profundidad visual.
+=============================================================== */
+#nombre-cancion {
+    color: var(--morado);
+    font-size: 16px;
+
+    display: block;
+    width: fit-content;    /* Solo ocupa el ancho de su contenido */
+    margin: 10px auto;     /* Centrado horizontalmente */
+
+    background: rgba(0, 0, 0, 0.8); /* Fondo oscuro para que el texto sea legible */
+    padding: 8px 16px;
+    border-radius: 12px;
+
+    /* Múltiples capas de text-shadow para el efecto neón profundo */
+    text-shadow: 
+        0 0 5px var(--morado),
+        0 0 10px var(--morado),
+        0 0 20px #4B0082,
+        0 0 30px #000000;
+}
+
+
+/* ==============================================================
+   📚 PANEL BIBLIOTECA (#biblioteca)
+   Panel flotante centrado en pantalla que muestra la lista
+   de canciones disponibles. Se abre y cierra desde JavaScript.
+   Está oculto por defecto (display: none en el HTML).
+=============================================================== */
+#biblioteca {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra perfectamente el panel en pantalla */
+
+    background: var(--fondo);  /* Fondo negro casi opaco */
+    padding: 25px;
+    border-radius: 15px;
+
+    width: 300px;
+    text-align: center;
+
+    color: white;
+    z-index: 100;                      /* Por encima del contenido normal */
+    box-shadow: 0 0 20px var(--azul);  /* Borde brillante azul neón */
+}
+
+#biblioteca h2 {
+    margin-bottom: 15px;
+    color: var(--azul); /* El título del panel es azul neón */
+}
+
+#biblioteca ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Cada canción de la lista */
+#biblioteca li {
+    margin: 10px 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Al pasar el cursor sobre una canción */
+#biblioteca li:hover {
+    color: var(--azul);
+    transform: scale(1.1); /* Zoom suave */
+}
+
+
+/* ==============================================================
+   👑 PANEL PREMIUM (#premium)
+   Similar al panel de biblioteca pero más ancho para mostrar
+   el reproductor de video y la lista de videos premium.
+   Está oculto por defecto (display: none).
+   Solo se puede abrir si el usuario tiene la licencia premium.
+=============================================================== */
+#premium {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: var(--fondo);
+    padding: 25px;
+    border-radius: 15px;
+
+    width: 350px;      /* Más ancho que biblioteca para acomodar el video */
+    text-align: center;
+
+    color: white;
+    z-index: 100;
+
+    box-shadow: 0 0 20px var(--azul);
+
+    display: none; /* Oculto hasta que se active con JS */
+}
+
+#premium h2 {
+    margin-bottom: 15px;
+    color: var(--azul);
+}
+
+#premium ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+/* Cada video de la lista premium */
+#premium li {
+    margin: 10px 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#premium li:hover {
+    color: var(--azul);
+    transform: scale(1.1);
+}
+
+/* El reproductor de video dentro del panel premium */
+#premium video {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 15px var(--azul); /* El video también tiene borde brillante */
+}
+
+
+/* ==============================================================
+   ⭐ BOTÓN PRO (.premium-box y #btn-pro)
+   Botón fijo en la esquina superior derecha que abre el modal
+   de contraseña para activar o desactivar el acceso premium.
+=============================================================== */
+.premium-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999; /* Siempre visible por encima de todo */
+}
+
+#btn-pro {
+    background: var(--azul);
+    color: black;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Al pasar el cursor, cambia de azul a morado */
+#btn-pro:hover {
+    background: var(--morado);
+    color: white;
+}
+
+
+/* ==============================================================
+   🪟 MODAL GENÉRICO — PRIMERA DECLARACIÓN
+   Overlay oscuro que cubre toda la pantalla.
+   Está oculto por defecto con display: none.
+   JavaScript lo activa cambiándolo a display: flex para que
+   el contenido interior quede centrado.
+   ⚠️ Esta declaración queda sobreescrita por la segunda de abajo.
+=============================================================== */
+.modal {
+    display: none; /* Oculto por defecto — JS lo cambia a "flex" para mostrarlo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.7); /* Esta línea queda sobreescrita por la declaración de abajo */
+
+    justify-content: center; /* Centra el contenido cuando está visible */
+    align-items: center;
+
+    z-index: 99999; /* El más alto de toda la página, siempre encima de todo */
+}
+
+
+/* ==============================================================
+   ℹ️ BOTÓN DE INFORMACIÓN (.info-box)
+   Ícono fijo en la esquina superior izquierda que abre el
+   modal con información sobre qué es WARSMUSIC.
+=============================================================== */
+.info-box {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 25px;
+    cursor: pointer;
+    color: white;
+}
+
+
+/* ==============================================================
+   🪟 MODAL GENÉRICO — SEGUNDA DECLARACIÓN
+   Esta versión sobreescribe la primera.
+   Cambia el fondo de negro a azul oscuro semitransparente
+   y agrega la fuente Georgia para el texto de los modales.
+   Es la versión que realmente aplica el navegador.
+=============================================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(6, 55, 83, 0.7); /* Overlay azul oscuro — sobreescribe el negro de arriba */
+    justify-content: center;
+    align-items: center;
+    font-family: Georgia, 'Times New Roman', serif; /* Fuente clásica para los modales */
+}
+
+
+/* ==============================================================
+   📋 CONTENIDO INTERNO DE LOS MODALES (.modal-content)
+   La caja que aparece en el centro del overlay.
+   Contiene el título, el campo de contraseña o el texto
+   de información, y el botón de acción.
+=============================================================== */
+.modal-content {
+    background: #111;       /* Fondo casi negro */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    width: 300px;
+}

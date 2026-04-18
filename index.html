@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<!-- Define que el documento es HTML5 -->
+
+<html lang="es">
+<!-- Indica que el idioma de la página es español -->
+
+<head>
+    <meta charset="UTF-8">
+    <!-- Permite usar caracteres especiales como tildes -->
+
+    <title>WARSMUSIC</title>
+    <!-- Título que aparece en la pestaña del navegador -->
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Archivo principal de estilos — controla colores, fuentes, tamaños y posiciones -->
+
+    <link rel="stylesheet" href="figuras-movimiento.css">
+    <!-- Archivo CSS extra — contiene solo las animaciones del fondo de círculos -->
+
+    <!-- ICONO -->
+    <link rel="shortcut icon" href="./imagenes/unnamed.png">
+    <!-- Ícono pequeño que aparece en la pestaña del navegador (favicon) -->
+
+    <!-- ICONOS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Librería Font Awesome cargada desde internet — da acceso a los íconos
+         de play, pausa, anterior, siguiente, info, etc. que se usan en la página -->
+</head>
+
+<body>
+<!-- Todo lo que esté dentro de body es lo que el usuario ve en pantalla -->
+
+    <!-- TITULO -->
+    <h1>WARSMUSIC</h1>
+    <!-- Título principal de la página, estilizado con brillo neón azul en el CSS -->
+
+    <h2>¡Bienvenido a WARSMUSIC!</h2>
+    <!-- Subtítulo de bienvenida que aparece debajo del título principal -->
+
+    <!-- MENÚ -->
+    <nav class="navbar">
+    <!-- Barra de navegación — agrupa todos los enlaces del menú -->
+
+        <ul class="nav-links">
+        <!-- Lista de opciones del menú, el CSS la convierte en una fila horizontal centrada -->
+
+            <li><a href="#">Inicio</a></li>
+            <!-- Enlace de inicio — el # evita que recargue o redirija la página al hacer clic -->
+
+            <li><a href="#" id="btn-explorar">Explorar</a></li>
+            <!-- Botón Explorar — tiene id para que JavaScript pueda escuchar su clic -->
+
+            <li><a href="#" id="btn-biblioteca">Biblioteca</a></li>
+            <!-- Al hacer clic, JS muestra u oculta el panel de la biblioteca de canciones -->
+
+            <li><a href="#" id="btn-premium">Premium</a></li>
+            <!-- Al hacer clic, JS verifica si el usuario tiene licencia y abre el panel premium -->
+        </ul>
+    </nav>
+
+    <!-- REPRODUCTOR -->
+    <audio id="reproductor"></audio>
+    <!-- Elemento de audio invisible — JS le asigna la canción con .src
+         y lo controla con .play() y .pause() -->
+
+    <div class="player-controls">
+    <!-- Contenedor visual de los tres botones del reproductor y el nombre de la canción -->
+
+        <i class="fas fa-backward" id="btn-prev"></i>
+        <!-- Ícono de retroceso (Font Awesome) — JS lo usa para ir a la canción anterior -->
+
+        <i class="fas fa-play" id="btn-play"></i>
+        <!-- Ícono de play — JS lo cambia a fa-pause cuando hay una canción reproduciéndose -->
+
+        <i class="fas fa-forward" id="btn-next"></i>
+        <!-- Ícono de avance — JS lo usa para pasar a la siguiente canción -->
+
+        <p id="nombre-cancion"></p>
+        <!-- Párrafo vacío — JS escribe aquí el nombre de la canción actual -->
+    </div>
+
+    <!-- BIBLIOTECA -->
+    <section id="biblioteca" style="display: none;">
+    <!-- Panel oculto por defecto (display: none).
+         JS lo muestra al hacer clic en "Biblioteca" y lo oculta al hacer clic afuera -->
+
+        <h2>Mi Biblioteca</h2>
+
+        <ul>
+        <!-- Cada li llama a seleccionarCancion() con el número de índice que corresponde
+             a esa canción dentro del array listaDeCanciones en el archivo JS -->
+
+            <li onclick="seleccionarCancion(0)">...</li>
+            <!-- Índice 0 — primer elemento del array (ruta vacía, por eso aparece "...") -->
+
+            <li onclick="seleccionarCancion(1)">Wisin & Yandel - Yo Te Quiero</li>
+            <li onclick="seleccionarCancion(2)">CHUCHA</li>
+            <li onclick="seleccionarCancion(3)">BOQUISUCIO</li>
+            <li onclick="seleccionarCancion(4)">Stolen Dance</li>
+            <li onclick="seleccionarCancion(5)">No puedo estar sin sex</li>
+            <li onclick="seleccionarCancion(6)">Prrrum</li>
+            <li onclick="seleccionarCancion(7)">TUKI TUKI</li>
+            <li onclick="seleccionarCancion(8)">GANAS</li>
+            <li onclick="seleccionarCancion(9)">Pico y Chao</li>
+            <li onclick="seleccionarCancion(10)">Acechandote</li>
+            <li onclick="seleccionarCancion(11)">Historia de Taxi</li>
+            <li onclick="seleccionarCancion(12)">Entre amigos</li>
+        </ul>
+    </section>
+
+    <!-- PREMIUM -->
+    <section id="premium" style="display: none;">
+    <!-- Panel premium también oculto por defecto.
+         Solo se puede abrir si el usuario tiene la licencia premium guardada en localStorage -->
+
+        <h2>Contenido Premium</h2>
+
+        <video id="videoPlayer" width="100%" controls>
+        </video>
+        <!-- Reproductor de video — JS le asigna el src según el video seleccionado.
+             El atributo controls muestra los controles nativos del navegador -->
+
+        <ul>
+        <!-- Cada li llama a reproducirVideo() con el índice correspondiente
+             al array listaDeVideos en el archivo JS -->
+
+             <li onclick="reproducirVideo(0)">GANAS</li>
+            <li onclick="reproducirVideo(1)">Entre amigos</li>
+            <li onclick="reproducirVideo(2)">La Historia del Taxi</li>
+            <li onclick="reproducirVideo(3)">Yo te quiero</li>
+            <li onclick="reproducirVideo(4)">Si no regresas</li>
+            <li onclick="reproducirVideo(5)">Setaoc Mass Boiler Room</li>
+        </ul>
+    </section>
+
+    <!-- BOTÓN PRO -->
+    <div class="premium-box">
+    <!-- Contenedor fijo en la esquina superior derecha de la pantalla -->
+
+        <button id="btn-pro">PRO</button>
+        <!-- Botón que abre el modal de contraseña para activar o quitar el acceso premium -->
+
+        <span id="estado-premium"></span>
+        <!-- Span vacío — JS escribe "✅" aquí cuando el usuario activa el premium
+             y lo borra cuando se quita la licencia -->
+    </div>
+
+    <!-- MODAL CONTRASEÑA -->
+    <div id="modal-pass" class="modal">
+    <!-- Ventana emergente que cubre toda la pantalla con un overlay oscuro.
+         Oculta por defecto — JS la muestra con display: flex al hacer clic en PRO -->
+
+        <div class="modal-content">
+        <!-- Caja centrada dentro del overlay con el formulario de acceso premium -->
+
+            <h3>Acceso Premium</h3>
+
+            <input type="password" id="input-pass" placeholder="Contraseña">
+            <!-- Campo tipo password — oculta los caracteres mientras se escribe.
+                 JS lee su valor: "1234" activa el premium, "9999" lo quita -->
+
+            <button id="btn-validar">Entrar</button>
+            <!-- Botón que dispara la función de validación en JS al hacer clic -->
+        </div>
+    </div>
+
+    <!-- FONDO ANIMADO -->
+    <div class="area">
+        <ul class="circulos">
+        <!-- 30 elementos li vacíos — el CSS los convierte en partículas animadas
+             (círculos que suben desde abajo) con distintos tamaños, posiciones
+             y velocidades para crear el efecto de fondo en movimiento -->
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>           
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>           
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+            
+        </ul>
+    </div>
+
+    <!-- JS -->
+    <script src="rep_music.js" defer></script>
+    <!-- Carga el archivo JavaScript que controla toda la lógica.
+         defer hace que espere a que el HTML termine de cargar antes de ejecutarse,
+         así JS encuentra todos los elementos sin errores -->
+
+    <!-- INFO -->
+    <div class="info-box">
+        <i class="fas fa-info-circle" id="btn-info"></i>
+        <!-- Ícono de información fijo en la esquina superior izquierda.
+             JS abre el modal de información al hacer clic -->
+    </div>
+
+    <!-- MODAL INFO -->
+    <div id="modal-info" class="modal">
+    <!-- Ventana emergente con la descripción de qué es WARSMUSIC.
+         Se abre al hacer clic en el ícono de información -->
+
+        <div class="modal-content">
+            <h3>¿Qué es WARSMUSIC?</h3>
+
+            <p id="texto-info"></p>
+            <!-- Párrafo vacío — JS inyecta el texto explicativo aquí
+                 cuando se abre el modal -->
+
+            <button onclick="cerrarInfo()">Cerrar</button>
+            <!-- Llama directamente a cerrarInfo() en JS,
+                 que oculta este modal con display: none -->
+        </div>
+    </div>
+
+</body>
+</html>
